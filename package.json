@@ -1,0 +1,33 @@
+{
+  "name": "devtools-plus",
+  "version": "1.0.0",
+  "description": "V8 DevTools extension",
+  "main": "index.js",
+  "scripts": {
+    "start": "node lib/index.js",
+    "demo": "node --inspect lib/index.js",
+    "build": "babel src -d lib",
+    "test": "nyc --require babel-core/register mocha"
+  },
+  "keywords": [
+    "ui",
+    "nodejs",
+    "devtools"
+  ],
+  "author": "Alexandre Morgaut",
+  "license": "MIT",
+  "repository": "https://github.com/AMorgaut/devtools-plus",
+  "dependencies": {
+    "chrome-remote-interface": "^0.27.0",
+    "node-fetch": "^2.3.0",
+    "node-firefox": "^0.1.0",
+    "uuid": "^3.3.2",
+    "ws": "^6.1.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "jshint": "^2.9.6",
+    "mocha": "^5.2.0"
+  }
+}
