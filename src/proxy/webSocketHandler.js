@@ -1,7 +1,8 @@
 'use strict';
 
 import WebSocket from 'ws';
-import list from './list';
+import * as list from './list';
+import { PORT } from '../config';
 
 let remoteProtocolServer = null;
 let wsProxy = null;
@@ -17,17 +18,17 @@ export function handleUpgrade(proxyServer) {
 
 async function onDevtoolsConnection(ws, request, socket, head) {
     console.log('============================== WEB SOCKET DEVTOOLS CONNECTION ==============================');
-    // console.log('head', head);
     console.log('request', request.method, request.url, request.headers);
-    // console.log('socket', socket);
-    const { headers } = request;
+//     const { headers } = request;
     const url = await list.targetWebSocketDebuggerUrl;
-    remoteProtocolServer = new WebSocket(url, [], {
-        // perMessageDeflate: headers['sec-websocket-extensions'].includes('permessage-deflate'),
-        'sec-websocket-extension': headers['sec-websocket-extension'],
-        'sec-websocket-key': headers['sec-websocket-key'],
-        protocolVersion: Number(headers['sec-websocket-version'])
-    });
+//     remoteProtocolServer = new WebSocket(url, [], {
+//         // perMessageDeflate: headers['sec-websocket-extensions'].includes('permessage-deflate'),
+//         'sec-websocket-extension': headers['sec-websocket-extension'],
+//         'sec-websocket-key': headers['sec-websocket-key'],
+//         protocolVersion: Number(headers['sec-websocket-version'])
+//     });
+    remoteProtocolServer = new WebSocket(url, [], {});
+    
     remoteProtocolServer.on('open', onRemoteProtocolServerConnection);
     remoteProtocolServer.on('message', onRemoteProtocolMessage);
     remoteProtocolServer.on('error', (error) => console.error('REMOTE', url, error));
