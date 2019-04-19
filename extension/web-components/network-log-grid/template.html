@@ -1,0 +1,29 @@
+<template id="myCustomElementTemplate">
+    <nav class="column">
+        <table>
+            <colgroup>
+                <col id="logNameCol" />
+            </colgroup>
+            <thead>
+            <tr><th>Name</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>foo.html</td></tr>
+            <tr><td>bar.js</td></tr>
+            <tr><td>baz.css</td></tr>
+            </tbody>
+        </table>
+    </nav>
+</template>
+<script type="module">
+    console.log(import.meta);
+    const document = import.meta.document;
+    const [template] = document.getElementsByTagName('template');
+    export default class NetworkLogGrid extends HTMLElement {
+        constructor(){
+            super();
+            const shadowRoot = this.attachShadow({ mode: "closed" });
+            shadowRoot.appendChild(document.importNode(template.content, true));
+        }
+    }
+</script>

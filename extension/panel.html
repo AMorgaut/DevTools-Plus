@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test DevTools Plus</title>
+    <link rel="stylesheet" href="style.css" />
+<!--    <link rel="import" href="web-components/network-log-grid/template.html" />-->
+    <script src="chrome-remote-interface.js"></script>
+    <script type="module" src="panel.js" defer></script>
+</head>
+<body>
+    <h1>DevTools Plus Tester</h1>
+    <h2>Network</h2>
+    <form>
+        <select name="method">
+            <option>GET</option>
+            <option>POST</option>
+            <option>PUT</option>
+            <option>DELETE</option>
+            <option>OPTIONS</option>
+            <option>HEAD</option>
+            <option>TRACE</option>
+            <option>PATCH</option>
+            <option>CONNECT</option>
+        </select>
+        <input name="url" />
+        <input type="submit" value="Send Request from Node.JS" />
+        <fieldset>
+            <legend>Request Headers</legend>
+            <input name="headerName" placeholder="name" />
+            <input name="headerValue" placeholder="value" />
+        </fieldset>
+        <fieldset>
+            <legend>Request Body</legend>
+            <textarea style="width: 100%"></textarea>
+        </fieldset>
+    </form>
+    <h2>Log Server Request</h2>
+    <button>Enable</button> <button>Disable</button>
+    <section class="network-status-pane row">
+        <nav class="network-log-grid column">
+            <table>
+                <colgroup>
+                    <col id="logNameCol" />
+                </colgroup>
+                <thead><tr><th>Name</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </nav>
+        <aside class="network-details-view column">
+            <nav class="tabbed-pane-header">
+                <input type="radio" name="tabset" id="tab0" aria-controls="x">
+                <label for="tab0">x</label>
+                <!-- Tab 1 -->
+                <input type="radio" name="tabset" id="tab1" aria-controls="Headers" checked>
+                <label for="tab1">Headers</label>
+                <!-- Tab 2 -->
+                <input type="radio" name="tabset" id="tab2" aria-controls="Preview">
+                <label for="tab2">Preview</label>
+                <!-- Tab 3 -->
+                <input type="radio" name="tabset" id="tab3" aria-controls="Response">
+                <label for="tab3">Response</label>
+                <!-- Content -->
+                <section class="tab-panels">
+                    <!-- Tab 0 -->
+                    <section></section>
+                    <!-- Tab 1 -->
+                    <section class="request-view tab-panel">
+                        <details class="row" open>
+                            <summary>General</summary>
+                            <ul>
+                                <li><strong>Request URL:</strong> <var></var></li>
+                                <li><strong>Request Method:</strong> <var></var></li>
+                                <li><strong>Status Code:</strong> <var></var></li>
+                            </ul>
+                        </details>
+                        <details class="row" open>
+                            <summary>Response Headers</summary>
+                            <ul></ul>
+                        </details>
+                        <details class="row" open>
+                            <summary>Request Headers</summary>
+                            <ul></ul>
+                        </details>
+                    </section>
+                    <!-- Tab 2 -->
+                    <section class="request-view tab-panel">
+                        <output></output>
+                    </section>
+                    <!-- Tab 3 -->
+                    <section class="request-view tab-panel">
+                        <output></output>
+                    </section>
+                </section>
+            </nav>
+        </aside>
+    </section>
+</body>
+</html>

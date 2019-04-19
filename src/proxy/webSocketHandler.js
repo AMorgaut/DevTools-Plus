@@ -1,7 +1,9 @@
 'use strict';
 
+// import CDP from 'chrome-remote-interface';
 import WebSocket from 'ws';
-import list from './list';
+import * as list from './list';
+import { PORT } from '../config';
 
 let remoteProtocolServer = null;
 let wsProxy = null;
@@ -17,25 +19,38 @@ export function handleUpgrade(proxyServer) {
 
 async function onDevtoolsConnection(ws, request, socket, head) {
     console.log('============================== WEB SOCKET DEVTOOLS CONNECTION ==============================');
-    // console.log('head', head);
     console.log('request', request.method, request.url, request.headers);
     // console.log('socket', socket);
-    const { headers } = request;
+    // const { headers } = request;
     const url = await list.targetWebSocketDebuggerUrl;
-    remoteProtocolServer = new WebSocket(url, [], {
-        // perMessageDeflate: headers['sec-websocket-extensions'].includes('permessage-deflate'),
-        'sec-websocket-extension': headers['sec-websocket-extension'],
-        'sec-websocket-key': headers['sec-websocket-key'],
-        protocolVersion: Number(headers['sec-websocket-version'])
-    });
+    // remoteProtocolServer = new WebSocket(url, [], {
+    //     // perMessageDeflate: headers['sec-websocket-extensions'].includes('permessage-deflate'),
+    //     'sec-websocket-extension': headers['sec-websocket-extension'],
+    //     'sec-websocket-key': headers['sec-websocket-key'],
+    //     protocolVersion: Number(headers['sec-websocket-version'])
+    // });
+    remoteProtocolServer = new WebSocket(url, [], {});
+
     remoteProtocolServer.on('open', onRemoteProtocolServerConnection);
     remoteProtocolServer.on('message', onRemoteProtocolMessage);
     remoteProtocolServer.on('error', (error) => console.error('REMOTE', url, error));
     remoteProtocolServer.on('close', onRemoteProtocolServerConnectionClose);
+
+    // try {
+    //     remoteProtocolServer = await CDP({ target: url });
+    //     remoteProtocolServer.on('event', onRemoteProtocolMessage);
+    //     remoteProtocolServer.on('error', (error) => console.error('REMOTE', url, error));
+    //     remoteProtocolServer.on('disconnect', onRemoteProtocolServerConnectionClose);
+    //     onRemoteProtocolServerConnection(remoteProtocolServer);
+    // } catch (error) {
+    //     console.error('REMOTE CONNECTION ERROR', url, error)
+    // }
+    // console.log('remoteProtocolServer', remoteProtocolServer);
 }
 
-function onRemoteProtocolServerConnection() {
+function onRemoteProtocolServerConnection(...args) {
     console.log('============================== REMOTE PROTOCOL CONNECTION ==============================');
+    console.log('[REMOTE]', ...args);
 }
 
 function onDevtoolsConnectionClose(...args) {
@@ -50,7 +65,7 @@ function onRemoteProtocolServerConnectionClose(...args) {
     console.log('[REMOTE]', ...args);
 }
 
-function onDevToolsMessage(data) {
+async function onDevToolsMessage(data) {
     console.log('============================== WEB SOCKET DEVTOOLS MESSAGE ==============================');
     console.log('[DEVTOOLS]', data);
     data.sessionId = data.sessionId.replace(':8229:', `:${PORT}:`);
@@ -59,7 +74,8 @@ function onDevToolsMessage(data) {
         console.log(request);
         return;
     }
-    remoteProtocolServer.send(data);
+    // return await new Promise(resolve => client.send(request.method, request.params, resolve));
+    return remoteProtocolServer.send(data);
 }
 
 function onRemoteProtocolMessage(data) {

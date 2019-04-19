@@ -11,46 +11,70 @@
  * @see https://chromedevtools.github.io/devtools-protocol/#get-json-or-jsonlist
  */
 
-import { PORT, TARGET, FAVICON } from '../config';
 import httpFetch from 'node-fetch';
 
-import { DESCRIPTION } from '../config';
+import CONFIG from '../config';
 
 export const fetch = fetchList;
 
 async function fetchList() {
-    const response = await httpFetch(`${TARGET}/json/list`);
+    const response = await httpFetch(`${CONFIG.TARGET}/json/list`);
     const json = await response.json();
     const [item] = json;
     return item;
 }
 
-export let targetWebSocketDebuggerUrl = fetchList()
+/**
+ * @type {Promise<string>}
+ */
+export const targetWebSocketDebuggerUrl = fetchList()
     .then(item => item.webSocketDebuggerUrl);
 
-export let proxyDebuggerUrl = targetWebSocketDebuggerUrl
-    .then(url => url.replace(process.debugPort, PORT));
+targetWebSocketDebuggerUrl.then(url => console.log('target url', url));
 
+/**
+ * @type {Promise<string>}
+ */
+export const proxyDebuggerUrl = targetWebSocketDebuggerUrl
+    .then(url => url.replace(process.debugPort, CONFIG.PORT));
+
+proxyDebuggerUrl.then(url => console.log('proxy url', url));
+
+/**
+ * @typedef RemoteProcess
+ * @property {string} id
+ * @property {string} title
+ * @property {string} type
+ * @property {string} description
+ * @property {string} faviconUrl
+ * @property {string} url
+ * @property {string} devtoolsFrontendUrl
+ * @property {string} webSocketDebuggerUrl
+ */
+
+/**
+ * @returns {Promise<RemoteProcess[]>}
+ */
 export async function getList() {
     const item = await fetchList();
     const { webSocketDebuggerUrl } = item;
 
-    let proxyDebuggerUrl;
     let devtoolsFrontendUrl = item.devtoolsFrontendUrl;
 
     if (webSocketDebuggerUrl) {
-        const targetWebSocketDebuggerUrl = await targetWebSocketDebuggerUrl;
-        proxyDebuggerUrl = await proxyDebuggerUrl;
+        // const targetWebSocketDebuggerUrl = await targetWebSocketDebuggerUrl;
+        // proxyDebuggerUrl = await proxyDebuggerUrl;
         devtoolsFrontendUrl = devtoolsFrontendUrl.replace(
             webSocketDebuggerUrl.replace('ws://', 'ws='),
-            proxyDebuggerUrl.replace('ws://', 'ws=')
+            (await proxyDebuggerUrl).replace('ws://', 'ws=')
         );
 
-        item.webSocketDebuggerUrl = proxyDebuggerUrl;
+        item.webSocketDebuggerUrl = await proxyDebuggerUrl;
     }
 
-    item.description = `${item.description} ${DESCRIPTION}`;
-    item.faviconUrl = FAVICON;
+    item.description = `${item.description} ${CONFIG.DESCRIPTION}`;
+    const [,,origin] = (await proxyDebuggerUrl).split('/');
+    item.faviconUrl = CONFIG.FAVICON.startsWith('http') ? CONFIG.FAVICON : `http://${origin}/favicon`;
     item.type = 'page';
     if (devtoolsFrontendUrl) {
         item.devtoolsFrontendUrl = devtoolsFrontendUrl.replace('v8only=true&', '');

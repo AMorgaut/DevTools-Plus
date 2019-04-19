@@ -2,12 +2,13 @@
   "name": "devtools-plus",
   "version": "1.0.0",
   "description": "V8 DevTools extension",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",
     "demo": "node --inspect lib/index.js",
     "build": "babel src -d lib",
-    "test": "nyc --require babel-core/register mocha"
+    "test": "nyc --require babel-core/register mocha",
+    "ui":  "node --inspect test/server.js"
   },
   "keywords": [
     "ui",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-plugin-dynamic-import-node": "^2.2.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "jshint": "^2.9.6",
     "mocha": "^5.2.0"

@@ -8,13 +8,13 @@
  * @see https://chromedevtools.github.io/devtools-protocol/#get-jsonprotocol
  */
 
-import httpFetch from 'node-fetch';
-import network from '../network/protocol';
+// import httpFetch from 'node-fetch';
+import { PROTOCOL_VERSION } from "../config";
 
 
 export async function getProtocol(target) {
-    const response = await httpFetch(`${target}/json/protocol`);
-    const json = await response.json();
-    json.domains.push(network);
-    return json;
+    // const response = await httpFetch(`${target}/json/protocol`);
+    // const json = await response.json();
+    // json.domains.push(Network);
+    return await import(`../${PROTOCOL_VERSION}/protocol.json`);
 }
