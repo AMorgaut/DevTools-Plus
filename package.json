@@ -22,7 +22,7 @@
     "node-fetch": "^2.3.0",
     "node-firefox": "^0.1.0",
     "uuid": "^8.3.2",
-    "ws": "^7.0.0"
+    "ws": "^8.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
